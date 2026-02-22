@@ -4,6 +4,52 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nexus-Code | Collaborative Workspace</title>
+    <link href="./output.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body></body>
+  <body class="bg-[#08090a]">
+    <!-- NAVBAR SECTİON -->
+    <nav
+      class="sticky top-0 z-50 grid grid-cols-3 items-center px-10 text-[#edecec] font-serif py-2 text-xl font-bold"
+    >
+      <div class="flex justify-start">
+        <p class="text-[#edecec] inline-block">NEXUS CODE</p>
+      </div>
+      <div class="flex justify-center gap-8 text-[#edecec]">
+        <button>Özellikler</button>
+        <button>Hakkımızda</button>
+      </div>
+      <div class="flex justify-end">
+        <button class="w-fit bg-[#edecec] rounded-2xl p-1 text-black">
+          Giriş Yap
+        </button>
+      </div>
+    </nav>
+    <main class="mt-36 px-10">
+      <div class="text-left">
+        <h1 class="text-5xl text-[#bfb7a9] mb-4 font-[monaco]">
+          Kod Yazmanın En Senkronize Hali
+        </h1>
+        <h2 class="text-xl text-[#bfb7a9] max-w-2xl mb-20 font-[monaco]">
+          Gerçek zamanlı iş birliği ile takım arkadaşlarınızla aynı anda kod
+          yazın. Projelerinizi tek bir çatı altında, gecikme olmadan geliştirin.
+        </h2>
+      </div>
+      <div class="flex justify-center gap-16 text-4xl mb-8">
+        <button
+          class="text-[#bfb7a9] hover:bg-[#3c3e42] hover:text-black rounded-2xl p-1.5 transition-all ease-in-out duration-500"
+        >
+          Çalışma Alanı Oluştur
+        </button>
+        <button
+          class="text-[#bfb7a9] hover:bg-[#3c3e42] hover:text-black rounded-2xl p-1.5 transition-all ease-in-out duration-500"
+        >
+          Özellikleri Keşfet
+        </button>
+      </div>
+      <div class="flex justify-center w-full h mb-20">
+        <img src="./github.png" class="max-w-6xl" />
+      </div>
+    </main>
+  </body>
 </html>
