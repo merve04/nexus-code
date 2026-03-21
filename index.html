@@ -16,11 +16,14 @@
         <p class="text-[#edecec] inline-block">NEXUS CODE</p>
       </div>
       <div class="flex justify-center gap-8 text-[#edecec]">
-        <button>Özellikler</button>
-        <button>Hakkımızda</button>
+        <button id="ozellikler">Özellikler</button>
+        <button id="hakkimizda">Hakkımızda</button>
       </div>
       <div class="flex justify-end">
-        <button class="w-fit bg-[#edecec] rounded-2xl p-1 text-black">
+        <button
+          id="giris"
+          class="w-fit bg-[#edecec] rounded-2xl p-1 text-black"
+        >
           Giriş Yap
         </button>
       </div>
@@ -51,7 +54,10 @@
         <img src="./github.png" class="max-w-6xl" />
       </div>
       <!-- Özellik kısmı -->
-      <h2 class="text-center text-[#bfb7a9] text-6xl mb-6 font-[monaco]">
+      <h2
+        id="ozelliklerBaslik"
+        class="text-center text-[#bfb7a9] text-6xl mb-6 font-[monaco]"
+      >
         Özellikler
       </h2>
       <h3 class="text-[#edecec] text-center text-2xl font-[monaco] mb-40">
@@ -142,7 +148,7 @@
       </div>
 
       <!--Teknik Altyapı Tanıtım Kısmı-->
-      <div class="bg-[#bfb7a9] flex items-center">
+      <div class="bg-[#bfb7a9] flex items-center mb-40 rounded-2xl">
         <div class="md:w-3/5 ml-5">
           <img src="./editor.png" alt="Editör kısmına ait bir görsel" />
         </div>
@@ -177,5 +183,107 @@
         </div>
       </div>
     </main>
+    <!--İletişim-->
+    <footer>
+      <div class="bg-[#000000] text-[#edecec] w-full">
+        <p class="text-center text-2xl mb-2 font-bold">NEXUS CODE</p>
+        <p class="text-lg pl-4">Merve Babayiğit</p>
+        <p class="text-lg pl-4">Bilgisayar Mühendisliği Öğrencisi</p>
+        <div class="flex flex-2 gap-5 pl-4">
+          <a
+            class="text-lg hover:text-gray-900"
+            href="https://github.com/merve04"
+            >Github</a
+          >
+          <a
+            class="text-lg hover:text-gray-900"
+            href="https://www.linkedin.com/in/merve-babayi%C4%9Fit-416063304/"
+            >Linkedin</a
+          >
+        </div>
+        <p class="text-end p-4">© 2026 Nexus-Code. Tüm Hakları Saklıdır.</p>
+      </div>
+    </footer>
+    <div id="girisKutusu" class="fixed hidden z-50 inset-0 bg-black/80">
+      <div class="flex justify-center items-center w-full h-full">
+        <div
+          class="relative bg-[#bfb7a9] p-10 rounded-3xl flex flex-col items-center w-96"
+        >
+          <button
+            id="kapatmaTusu"
+            class="absolute top-4 right-5 text-3xl font-bold text-gray-900 hover:text-red-600 transition-colors"
+          >
+            X
+          </button>
+
+          <div id="alanGiris" class="w-full flex flex-col items-center">
+            <h3 class="text-3xl font-bold mb-6 text-gray-900 font-[monaco]">
+              Giriş Yap
+            </h3>
+            <form class="flex flex-col gap-4 w-full mb-8">
+              <input
+                type="email"
+                id="kullanici"
+                placeholder="Kullanıcı Adı"
+                class="p-3 rounded-xl outline-none"
+              />
+              <input
+                type="password"
+                id="sifreGiris"
+                placeholder="Şifrenizi Giriniz"
+                class="p-3 rounded-xl outline-none"
+              />
+              <button
+                id="girisGonder"
+                type="submit"
+                class="bg-[#08090a] text-white p-3 rounded-xl font-bold hover:bg-gray-800"
+              >
+                Giriş Yap
+              </button>
+            </form>
+            <a
+              href="#"
+              id="linkKaydol"
+              class="text-sm text-center text-gray-800 hover:underline"
+              >Hesabınız yoksa oluşturun</a
+            >
+          </div>
+
+          <div id="alanKayit" class="w-full flex-col items-center hidden">
+            <h3 class="text-3xl font-bold mb-6 text-gray-900 font-[monaco]">
+              Kayıt Ol
+            </h3>
+            <form class="flex flex-col gap-4 w-full mb-8">
+              <input
+                type="email"
+                id="kullaniciKayit"
+                placeholder="E-posta Adresiniz"
+                class="p-3 rounded-xl outline-none"
+              />
+              <input
+                type="password"
+                id="sifreKayit"
+                placeholder="Şifre Oluşturun"
+                class="p-3 rounded-xl outline-none"
+              />
+              <button
+                id="kayitGonder"
+                type="submit"
+                class="bg-[#08090a] text-white p-3 rounded-xl font-bold hover:bg-gray-800"
+              >
+                Hesap Oluştur
+              </button>
+            </form>
+            <a
+              href="#"
+              id="linkGirisYap"
+              class="text-sm text-center text-gray-800 hover:underline"
+              >Zaten hesabınız var mı? Giriş yapın</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="./app.js"></script>
   </body>
 </html>
