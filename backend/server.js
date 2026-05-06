@@ -78,3 +78,4 @@ app.post("/api/giris", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Sunucu ${PORT} portunda ayaklandı!`);
 });
+// git test ediliyor
