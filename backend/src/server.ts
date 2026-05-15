@@ -1,21 +1,27 @@
-// 1. GEREKLİ PAKETLERİ ÇAĞIR
-const express = require("express");
-const cors = require("cors");
-const mongoose = require("mongoose");
-require("dotenv").config();
+// 1. GEREKLİ PAKETLERİ ÇAĞIR (Artık require yerine import kullanıyoruz)
+import express, { Request, Response } from "express";
+import cors from "cors";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-// 2. MODELİ ÇAĞIR (Veri kalıbımız)
-// Dikkat: models/User.js dosyanın varlığından emin ol!
-const Kullanici = require("./models/User");
+// Ayarları yükle
+dotenv.config();
+
+// 2. MODELİ ÇAĞIR
+// Not: Models klasöründeki User.js'i de ilerde .ts yapacağız ama şimdilik böyle kalsın
+// @ts-ignore
+import Kullanici from "./models/User.js";
 
 const app = express();
-const PORT = 5000;
+// TS burada "Ya MONGO_URI yoksa?" diye uyarır, o yüzden varsayılan değer ekleriz
+const MONGO_URI = process.env.MONGO_URI || "";
+const PORT = process.env.PORT || 5000;
 
-// 3. MONGODB BAĞLANTISI (Yerel Kasa)
+// 3. MONGODB BAĞLANTISI
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(MONGO_URI)
   .then(() => {
-    console.log("Mükemmel! MongoDB Yerel Kasasına Başarıyla Bağlanıldı! 🌿");
+    console.log("Mükemmel! MongoDB Kasasına Başarıyla Bağlanıldı! 🌿");
   })
   .catch((hata) => {
     console.log("Eyvah, Kasaya bağlanırken hata çıktı:", hata);
@@ -26,26 +32,22 @@ app.use(cors());
 app.use(express.json());
 
 // 5. ROTALAR
-app.get("/", (req, res) => {
-  res.send("Nexus-Code Backend Sunucusu Çalışıyor! 🚀");
+app.get("/", (req: Request, res: Response) => {
+  res.send("Nexus-Code Backend Sunucusu (TypeScript) Çalışıyor! 🚀");
 });
 
-// Kayıt İşlemi (Giriş Butonuna Basınca Çalışacak Kısım)
-app.post("/api/kayit", async (req, res) => {
+// Kayıt İşlemi
+app.post("/api/kayit", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     console.log("Müjde! React'tan bir kargo geldi:", { email, password });
-    const varOlanKullanici = await Kullanici.findOne({ email: email });
+
+    const varOlanKullanici = await Kullanici.findOne({ email });
     if (varOlanKullanici) {
       return res.status(400).json({ mesaj: "Bu e-posta zaten kayıtlı!" });
     }
-    // Veritabanına gerçekten kaydetme işlemi burada başlar
-    const yeniKullanici = new Kullanici({
-      email: email,
-      password: password,
-    });
 
-    // Kaydı tamamla ve kilit vur
+    const yeniKullanici = new Kullanici({ email, password });
     await yeniKullanici.save();
 
     res.status(201).json({
@@ -57,16 +59,21 @@ app.post("/api/kayit", async (req, res) => {
     res.status(500).json({ mesaj: "Veritabanı kayıt hatası!" });
   }
 });
-app.post("/api/giris", async (req, res) => {
+
+// Giriş İşlemi
+app.post("/api/giris", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    const varOlanKullanici = await Kullanici.findOne({ email: email });
+    const varOlanKullanici = await Kullanici.findOne({ email });
+
     if (!varOlanKullanici) {
       return res.status(400).json({ mesaj: "Böyle bir kullanıcı bulunamadı!" });
     }
+
     if (varOlanKullanici.password !== password) {
       return res.status(400).json({ mesaj: "Yanlış şifreyi denediniz!" });
     }
+
     res.status(200).json({ mesaj: "Harika! Başarıyla giriş yaptınız." });
   } catch (hata) {
     console.log("Giriş sisteminde hata:", hata);
@@ -78,4 +85,3 @@ app.post("/api/giris", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Sunucu ${PORT} portunda ayaklandı!`);
 });
-// git test ediliyor
