@@ -1,8 +1,11 @@
 // 1. GEREKLİ PAKETLERİ ÇAĞIR (Artık require yerine import kullanıyoruz)
 import express, { Request, Response } from "express";
+import bcrypt from "bcrypt";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import { authKontrol } from "./middleware/auth.js";
 
 // Ayarları yükle
 dotenv.config();
@@ -69,12 +72,22 @@ app.post("/api/giris", async (req: Request, res: Response) => {
     if (!varOlanKullanici) {
       return res.status(400).json({ mesaj: "Böyle bir kullanıcı bulunamadı!" });
     }
-
-    if (varOlanKullanici.password !== password) {
+    const sifreDogruMu = await bcrypt.compare(
+      password,
+      varOlanKullanici.password,
+    );
+    if (!sifreDogruMu) {
       return res.status(400).json({ mesaj: "Yanlış şifreyi denediniz!" });
     }
-
-    res.status(200).json({ mesaj: "Harika! Başarıyla giriş yaptınız." });
+    const token = jwt.sign(
+      { id: varOlanKullanici._id }, // Payload: Kartın içinde hangi bilgi saklanacak?
+      process.env.JWT_SECRET || "gizli-anahtar", // Secret: Kart hangi anahtarla mühürlenecek?
+      { expiresIn: "1h" }, // Options: Bu kart kaç saat geçerli olsun? (1 saat)
+    );
+    res.status(200).json({
+      mesaj: "Harika! Başarıyla giriş yaptınız.",
+      token: token, // İşte o meşhur dijital kimlik!
+    });
   } catch (hata) {
     console.log("Giriş sisteminde hata:", hata);
     res.status(500).json({ mesaj: "Sunucu hatası oluştu!" });
@@ -84,4 +97,10 @@ app.post("/api/giris", async (req: Request, res: Response) => {
 // 6. SUNUCUYU BAŞLAT
 app.listen(PORT, () => {
   console.log(`Sunucu ${PORT} portunda ayaklandı!`);
+});
+app.get("/api/profil", authKontrol, (req: Request, res: Response) => {
+  res.json({
+    mesaj: "Hoş geldin Merve! Bu sayfayı sadece giriş yapanlar görebilir.",
+    kullaniciDetay: (req as any).user, // Kartın içinden çıkan ID bilgisi
+  });
 });
