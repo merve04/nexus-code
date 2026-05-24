@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import axios from "axios";
+import { AuthContext } from "./context/AuthContext";
 
 function LoginModal({ setIsModalOpen, setLoggedInUser }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoginView, setIsLoginView] = useState(true);
 
+  const authContext = useContext(AuthContext);
   // GÖNDERİM FONKSİYONU (Pırıl pırıl, tek parça)
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,33 +20,39 @@ function LoginModal({ setIsModalOpen, setLoggedInUser }) {
       : "http://localhost:5000/api/kayit";
 
     try {
-      console.log(`Sunucuya (${apiUrl}) istek atılıyor...`);
+      console.log(`Sunucuya (${apiUrl}) Axios ile istek atılıyor...`);
 
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-      });
+      const response = await axios.post(apiUrl, userData);
 
-      const data = await response.json();
+      console.log("Backend'den gelen ham yanıt:", response.data);
 
-      // GÜVENLİK KONTROLÜ BURADA BAŞLIYOR!
-      if (response.ok) {
-        // Eğer backend "200" veya "201" (Başarılı) döndüyse:
-        console.log("İşlem Başarılı:", data.mesaj);
-        alert(data.mesaj); // "Başarıyla giriş yaptınız" veya "Kaydedildi" yazısını göster
+      // 1. ADIM: Önce gelen token'ı güvenli bir değişkene kilitleyelim
+      const gelenToken = response.data?.token;
 
-        setLoggedInUser(email); // İçeri al
-        setIsModalOpen(false); // Ekranı kapat
-      } else {
-        // Eğer backend "400" (Yanlış şifre vb.) döndüyse:
-        console.error("İşlem Reddedildi:", data.mesaj);
-        alert(data.mesaj); // Backend'in yolladığı o uyarıları ekrana bas!
-        // DİKKAT: Burada setLoggedInUser ÇALIŞMIYOR, yani içeri giremiyor.
+      if (isLoginView && gelenToken && authContext) {
+        authContext.login(gelenToken);
+        authContext.fetchUserProfile(gelenToken);
+        console.log("Token bulundu, hafızaya yazılıyor:", gelenToken);
+
+        // 2. ADIM: Doğrudan localStorage'a yazarak React'ın hızına güvenmeme kuralını uyguluyoruz
+        localStorage.setItem("token", gelenToken);
+
+        // 3. ADIM: Context havuzumuzu güncelliyoruz
+        if (authContext) {
+          authContext.login(gelenToken);
+        }
       }
+
+      alert(response.data.mesaj);
+
+      // 4. ADIM: Her şey diske güvence kaydedildikten sonra arayüzü kapatıyoruz
+      setLoggedInUser(email);
+      setIsModalOpen(false);
     } catch (error) {
-      console.error("Eyvah, sunucuya bağlanırken bir hata oluştu:", error);
-      alert("Bağlantı hatası! Sunucu açık mı?");
+      console.error("İşlem Başarısız:", error);
+      const hataMesaji =
+        error.response?.data?.mesaj || "Bağlantı hatası! Sunucu açık mı?";
+      alert(hataMesaji);
     }
   };
 

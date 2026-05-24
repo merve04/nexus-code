@@ -13,7 +13,7 @@ dotenv.config();
 // 2. MODELİ ÇAĞIR
 // Not: Models klasöründeki User.js'i de ilerde .ts yapacağız ama şimdilik böyle kalsın
 // @ts-ignore
-import Kullanici from "./models/User.js";
+import User from "./models/User.js"; // Kullanici yerine User yaptık
 
 const app = express();
 // TS burada "Ya MONGO_URI yoksa?" diye uyarır, o yüzden varsayılan değer ekleriz
@@ -45,12 +45,12 @@ app.post("/api/kayit", async (req: Request, res: Response) => {
     const { email, password } = req.body;
     console.log("Müjde! React'tan bir kargo geldi:", { email, password });
 
-    const varOlanKullanici = await Kullanici.findOne({ email });
+    const varOlanKullanici = await User.findOne({ email });
     if (varOlanKullanici) {
       return res.status(400).json({ mesaj: "Bu e-posta zaten kayıtlı!" });
     }
 
-    const yeniKullanici = new Kullanici({ email, password });
+    const yeniKullanici = new User({ email, password });
     await yeniKullanici.save();
 
     res.status(201).json({
@@ -67,7 +67,7 @@ app.post("/api/kayit", async (req: Request, res: Response) => {
 app.post("/api/giris", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    const varOlanKullanici = await Kullanici.findOne({ email });
+    const varOlanKullanici = await User.findOne({ email });
 
     if (!varOlanKullanici) {
       return res.status(400).json({ mesaj: "Böyle bir kullanıcı bulunamadı!" });
@@ -98,9 +98,22 @@ app.post("/api/giris", async (req: Request, res: Response) => {
 app.listen(PORT, () => {
   console.log(`Sunucu ${PORT} portunda ayaklandı!`);
 });
-app.get("/api/profil", authKontrol, (req: Request, res: Response) => {
-  res.json({
-    mesaj: "Hoş geldin Merve! Bu sayfayı sadece giriş yapanlar görebilir.",
-    kullaniciDetay: (req as any).user, // Kartın içinden çıkan ID bilgisi
-  });
+app.get("/api/profil", authKontrol, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id; // Token'dan gelen ID
+    const kullanici = await User.findById(userId);
+    if (!kullanici) {
+      return res.status(404).json({ mesaj: "Kullanıcı bulunamadı!" });
+    }
+
+    res.json({
+      mesaj: "Hoş geldin!",
+      kullaniciDetay: {
+        id: kullanici._id,
+        email: kullanici.email, // Email'i buraya açıkça ekledik
+      },
+    });
+  } catch (hata) {
+    res.status(500).json({ mesaj: "Profil bilgisi alınamadı" });
+  }
 });

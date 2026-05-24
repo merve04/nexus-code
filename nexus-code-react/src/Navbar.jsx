@@ -1,5 +1,8 @@
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext";
 import { Link, NavLink } from "react-router-dom";
-function Navbar({ setIsModalOpen, loggedInUser, setLoggedInUser }) {
+function Navbar({ setIsModalOpen }) {
+  const authContext = useContext(AuthContext);
   return (
     <nav className="bg-[#08090a] sticky top-0 z-50 grid grid-cols-3 items-center px-10 text-[#edecec] font-serif py-2 text-xl font-bold">
       <div className="flex justify-start">
@@ -7,6 +10,7 @@ function Navbar({ setIsModalOpen, loggedInUser, setLoggedInUser }) {
           NEXUS CODE
         </Link>
       </div>
+
       <div className="flex justify-center gap-8 text-[#edecec]">
         <NavLink
           to="./Ozellikler"
@@ -33,14 +37,20 @@ function Navbar({ setIsModalOpen, loggedInUser, setLoggedInUser }) {
         </NavLink>
       </div>
       <div className="flex justify-end">
-        {loggedInUser ? (
+        {/* 5. GÜVENLİK KONTROLÜ: Artık F5'te silinmeyen Token'a bakıyoruz */}
+        {authContext?.token ? (
           <div className="flex items-center gap-3">
-            <span className="text-sm font-sans text-gray-400">Hoş geldin,</span>
+            <span className="text-sm font-sans text-gray-400">Hoş geldin!</span>
             <span className="bg-[#edecec] text-black px-4 py-1 rounded-2xl font-sans text-sm">
-              {loggedInUser}
+              {/* Eğer kullanıcı ID'si yerine email tutuyorsan, @'den öncesini alıyoruz */}
+              {authContext?.user?.email
+                ? authContext.user.email.split("@")[0]
+                : authContext?.token
+                  ? "..."
+                  : "Kullanıcı"}
             </span>
             <button
-              onClick={() => setLoggedInUser(null)}
+              onClick={() => authContext.logout()} // 6. Merkezi logout fonksiyonu
               className="text-xs text-red-500 hover:text-red-400 underline ml-2"
             >
               Çıkış Yap

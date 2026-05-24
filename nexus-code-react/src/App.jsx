@@ -12,11 +12,7 @@ function App() {
 
   return (
     <div className="bg-[#08090a] min-h-screen flex flex-col">
-      <Navbar
-        setIsModalOpen={setIsModalOpen}
-        loggedInUser={loggedInUser}
-        setLoggedInUser={setLoggedInUser}
-      />
+      <Navbar setIsModalOpen={setIsModalOpen} />
       <div className="flex-grow">
         <Routes>
           <Route path="/" element={<Main />} />
